@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+var debug 		= require('debug')('leoQuiz');
+var app 		= require('../app');
+var modFs 		= require("fs");
+var modHttps 	= require("https");
+
+var opciones = {
+	key:  modFs.readFileSync('certs/quiz-2015-key.pem').toString(),
+	cert: modFs.readFileSync('certs/quiz-2015-cert.pem').toString()
+};
+
+
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
+  console.log('Express server listening on port ' + server.address().port);
+  
+});
+
+var servidorSeguro = modHttps.createServer(opciones,app);
+
+servidorSeguro.listen(8443,function(){
+	debug('Express secure server listening on port ' + servidorSeguro.address().port);
+	console.log('Express secure server listening on port ' + servidorSeguro.address().port);
+});
